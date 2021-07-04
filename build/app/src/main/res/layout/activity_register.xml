@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.TakeMe.Register">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="10"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom"
+            android:gravity="bottom"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/edtname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="24dp"
+                        android:textColor="@color/back"
+                        android:hint="Name"
+                        android:inputType="textPersonName"
+                        android:selectAllOnFocus="true" />
+
+                    <EditText
+                        android:id="@+id/edtSurname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="24dp"
+                        android:textColor="@color/back"
+                        android:hint="Surname"
+                        android:inputType="textPersonName"
+                        android:selectAllOnFocus="true" />
+
+                    <EditText
+                        android:id="@+id/edtEmail"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/back"
+                        android:layout_marginEnd="24dp"
+                        android:hint="Email"
+                        android:inputType="textEmailAddress"
+                        android:selectAllOnFocus="false" />
+
+                    <EditText
+                        android:id="@+id/edtPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/back"
+                        android:layout_marginEnd="24dp"
+                        android:hint="Phone Number"
+                        android:inputType="number"
+                        android:selectAllOnFocus="true" />
+
+                    <EditText
+                        android:id="@+id/edtPass"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/back"
+                        android:layout_marginEnd="24dp"
+                        android:hint="Password"
+                        android:inputType="textPassword"
+                        android:selectAllOnFocus="false" />
+
+                    <EditText
+                        android:id="@+id/edtPassC"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/back"
+                        android:layout_marginEnd="24dp"
+                        android:hint="Confirm Password"
+                        android:inputType="textPassword"
+                        android:selectAllOnFocus="false" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="24dp"
+                        android:background="@drawable/temp_background">
+
+                        <Spinner
+                            android:id="@+id/spType"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp" />
+
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="8"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="2"
+
+                android:layout_height="wrap_content" >
+
+                <Button
+                    android:id="@+id/btnPolicy"
+                    android:layout_weight="1"
+                    android:background="#000066"
+                    android:textColor="@color/White"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginRight="2dp"
+                    android:text="Policy" />
+
+                <Button
+                    android:id="@+id/btnTandC"
+                    android:layout_weight="1"
+                    android:background="@color/back"
+                    android:textColor="@color/White"
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="2dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginTop="40dp"
+                    android:text="T and C" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnSubmit"
+                android:background="@color/back"
+                android:textColor="@color/White"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="24dp"
+                android:text="Submit" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

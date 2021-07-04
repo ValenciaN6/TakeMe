@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Health Care</string>
+    <string name="title_settings">Statistics</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_update">Update</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="About">"app about ......"</string>
+    <string name="more"> It will help by speeding up the process of notifying people who have been in contact with someone with coronavirus. The app is in addition to practising good hygiene and physical distancing as well as the increased testing of the population.
+The app operates in the background on your phone as you go about your day. It uses Bluetooth to find other phones with the COVIDProtect app and records the date, time, distance and duration of contact. The app does not record your location. The app notes the device you have been within 1.5 metres of for 15 minutes or more.
+This information is encrypted and stored in the app on your phone. Not even you can access it.
+Contact information is only stored in the app for 21 days and after this time is automatically deleted. This period allows for the maximum 14-day incubation period of the virus, and the time it takes to confirm a positive test result.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_friend">FriendActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+</resources>
