@@ -10,7 +10,7 @@ function getfriend($id ){
 	
 	
      $link = @Conection(new json());
-     $sql  = "SELECT `patient`.`Email` , `patient`.`ID` FROM `friend` , `patient` WHERE `friend`.`IDA` = '$id' AND `patient`.`ID` = `friend`.`IDB` and `friend`.`Status` = '2' ";
+     $sql  = "SELECT `patient`.`Name`, `patient`.`Surname`, `patient`.`Email` , `patient`.`ID` FROM `friend` , `patient` WHERE `friend`.`IDA` = '$id' AND `patient`.`ID` = `friend`.`IDB` and `friend`.`Status` = '2' ";
 
      $dt =  @getElements($sql,new json());
 

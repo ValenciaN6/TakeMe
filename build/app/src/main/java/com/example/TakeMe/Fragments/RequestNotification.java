@@ -48,6 +48,7 @@ public class RequestNotification extends Fragment {
     private String mParam2;
     private RequestQueue mRequestQueue;
     private String ACTION_NOTIFICATION = "getNotification.php?id=";
+    private String ACTION_DELETE_NOTIFICATION = "deleteRequest.php?id=";
     private StringRequest mStringRequest;
     private String data ="{}";
     private String host ;
@@ -92,7 +93,7 @@ public class RequestNotification extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_request_notification, container, false);
-        listView= (ListView                ) view.findViewById(R.id.lsNotification);
+        listView= (ListView ) view.findViewById(R.id.lsNotification);
 
 
         SharedPreferences preferences = this.getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
@@ -107,7 +108,7 @@ public class RequestNotification extends Fragment {
 
             ID = jjsonObject.getString("ID");
             print(host);
-            sendAndRequestResponse(ACTION_NOTIFICATION + "9");
+            sendAndRequestResponse(ACTION_NOTIFICATION + ID);
             ;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -183,9 +184,10 @@ public class RequestNotification extends Fragment {
             btnAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(notification.get(pos).action.equals("DELETE")){
-                        print("Deleting this notification");
-                    }
+
+                    sendAndRequestResponse(ACTION_DELETE_NOTIFICATION + notification.get(pos).ID);
+
+
                 }
             });
 
@@ -241,11 +243,6 @@ public class RequestNotification extends Fragment {
                                             "Delete",
                                             jsonObject.getJSONArray("data").getJSONObject(x).getString("NOTID")
 
-
-
-
-
-
                                     );
 
                                     itemsArrayList.add(request);
@@ -256,6 +253,9 @@ public class RequestNotification extends Fragment {
                                  listView.setAdapter(adapter);
 
 
+                            }else if(jsonObject.getString("datatype").equals("deleteRequest")){
+                              //  notification.get(pos).ID
+                                 sendAndRequestResponse(ACTION_NOTIFICATION + ID);
                             }
 
                         }else {
@@ -280,14 +280,3 @@ public class RequestNotification extends Fragment {
 
 
 }
-
-
-
-                   /*     items = new CharSequence[jsonObject.getJSONArray("data").length()];
-                                itemsID = new String[jsonObject.getJSONArray("data").length()];
-                                 {"result":"done","data":[{"0":"5","NOTID":"5","1":"9","PID":"9","2":"request","NTYPE":"request",
-                                 "3":"1","NSTATUS":"1","4":"2021-06-19 13:52:59","Date":"2021-06-19 13:52:59","5":"babawam",
-                                 "PName":"babawam","6":"Gogo","RNAME":"Gogo","7":null,"DNAME":null},{"0":"6","NOTID":"6","1":"9",
-                                 "PID":"9","2":"request","NTYPE":"request","3":"waiting","NSTATUS":"waiting","4":"2021-06-19 15:57:55"
-                                 ,"Date":"2021-06-19 15:57:55","5":"babawam","PName":"babawam","6":"Gogo","RNAME":"Gogo","7":"","DNAME":"
-                                 "}],"datatype":"notification"}*/

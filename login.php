@@ -5,19 +5,38 @@ use \Simple\json;
 include('../baseservice/baseservice.php');	
 include("connecter.php");
 
-function login($Email ,$pass, $typy){
+function login($Email ,$pass){
 	
      $link = @Conection(new json());
-	 if($typy == "com")
-	 $sql  = "SELECT * FROM `company` WHERE `UserName` = '$Email' and `Password` = '$pass'";
-     else
-     $sql  = "SELECT * FROM `$typy` WHERE `Email` = '$Email' and `Password` = '$pass'";
 	 
+     $sql  = "SELECT * FROM `patient` WHERE `Email` = '$Email' and `Password` = '$pass'";
+ 
      $dt =  @getElements($sql,new json());
-
-	$dt->datatype = "login";
+	 if($dt->result == "done"){
+		 $dt->datatype = "login";
+		 return $dt;
+	 }
+	 
+	 
+     $sql  = "SELECT * FROM `company` WHERE `UserName` = '$Email' and `Password` = '$pass'";
+     $dt =  @getElements($sql,new json());
+	 if($dt->result == "done"){
+		 $dt->datatype = "login";
+		 return $dt;
+	 }
+	 
+	 
+	 
+	 $sql  = "SELECT * FROM `driver` WHERE `Email` = '$Email' and `Password` = '$pass'";
+	 
+	 $dt =  @getElements($sql,new json());
+	 if($dt->result == "done"){
+		 $dt->datatype = "login";
+		
+	 }
+	
    return $dt;
 }
 
-login($_GET['em'],$_GET['ps'],$_GET['tp'])->send();
+login($_GET['em'],$_GET['ps'])->send();
 ?>

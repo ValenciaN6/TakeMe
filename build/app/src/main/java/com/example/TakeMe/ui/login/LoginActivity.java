@@ -40,10 +40,9 @@ public class LoginActivity extends AppCompatActivity {
     private String MyPREFERENCES = "32145788";
     private String type = "patient";
     private RequestQueue mRequestQueue;
-    private String host = "http://192.168.8.171/takeme/";
+    private String host = "http://192.168.8.171:8081/takeme/";
     private StringRequest mStringRequest;
     private String ACTION_LOGIN = "login.php?";
-    private Spinner spnUsageTypeM;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,28 +53,9 @@ public class LoginActivity extends AppCompatActivity {
         Button register = (Button)findViewById(R.id.register);
         loading = (ProgressBar)findViewById(R.id.loading);
         TextView more = (TextView)findViewById(R.id.tvMore);
-        spnUsageTypeM = (Spinner)findViewById(R.id.spinner);
+
         String [] UsageType = {"Patient" , "Driver" ,"Company"};
 
-
-
-        ArrayAdapter aa = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_spinner_item,UsageType);
-        spnUsageTypeM.setAdapter(aa);
-
-        spnUsageTypeM.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String [] tp = {"patient","driver","com"};
-                type = tp[i];
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
 
 
 

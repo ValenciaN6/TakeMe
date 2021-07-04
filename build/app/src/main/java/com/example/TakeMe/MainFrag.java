@@ -47,7 +47,7 @@ public class MainFrag extends AppCompatActivity implements DriverSettings.OnFrag
                         break;
                     case R.id.navigation_update:
                         fragment = new DriverNotification();
-                        setTitle(R.string.title_update);
+                        setTitle("Request");
                         break;
                 }
             }else if(UserType.equals("1")) {
@@ -62,7 +62,7 @@ public class MainFrag extends AppCompatActivity implements DriverSettings.OnFrag
                         break;
                     case R.id.navigation_update:
                         fragment = new RequestNotification();
-                        setTitle(R.string.title_update);
+                        setTitle("Request");
                         break;
                 }
             }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -87,19 +88,32 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
             createMarker(jjsonObject.getDouble("Latitude"), jjsonObject.getDouble("Longitude"),"Me","", R.drawable.accident);
 
             LatLng latLng = new LatLng(jjsonObject.getDouble("Latitude"), jjsonObject.getDouble("Longitude"));
+            Location gpslocationD;
+            gpslocationD = new Location("");
+            gpslocationD.setLatitude(jjsonObject.getDouble("Latitude"));
+            gpslocationD.setLongitude(jjsonObject.getDouble("Longitude"));
+
+
             drawCircle(latLng);
             if(!dt.equals("")) {
-
 
 
                 JSONObject jsonObject = new JSONObject(dt);
                 JSONArray jsonArray = jsonObject.getJSONArray("data");
 
                 for (int x = 0; x < jsonArray.length(); x++) {
+
+                    Location gpslocation = new Location("");
+                    gpslocation.setLatitude(jsonArray.getJSONObject(x).getDouble("Latitude"));
+                    gpslocation.setLongitude(jsonArray.getJSONObject(x).getDouble("Longitude"));
+                    Float distance = (( gpslocation.distanceTo(gpslocationD))/1000 )+ 0.5f;
+                    String di = String.format("%.2f", distance); // distance.toString().split(".")[0];
+
                     createMarker(jsonArray.getJSONObject(x).getDouble("Latitude"),
                             jsonArray.getJSONObject(x).getDouble("Longitude"),
                             jsonArray.getJSONObject(x).getString("NumberPlate") + " : "
                                     + jsonArray.getJSONObject(x).getString("Description")
+                            + ": " + di +"km"
                             ,
                             "",
                             R.drawable.ambulance);

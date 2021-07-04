@@ -6,7 +6,7 @@ public class Request {
     public String response;
     public String date;
     public String action;
-    private String ID;
+    public String ID;
 
     public Request(String requester, String type, String response, String date, String action, String ID) {
         this.requester = requester;
