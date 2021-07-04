@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private String MyPREFERENCES = "32145788";
     private String type = "patient";
     private RequestQueue mRequestQueue;
-    private String host = "http://192.168.8.175/takeme/";
+    private String host = "http://192.168.8.171/takeme/";
     private StringRequest mStringRequest;
     private String ACTION_LOGIN = "login.php?";
     private Spinner spnUsageTypeM;
