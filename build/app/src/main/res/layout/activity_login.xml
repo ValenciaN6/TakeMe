@@ -8,100 +8,91 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
+    android:background="@drawable/background"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:background="@drawable/bk"
-
     android:layout_gravity="bottom"
     tools:context="com.example.TakeMe.ui.login.LoginActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_height="match_parent">
-
-
-        <TextView
-            android:id="@+id/textView"
-            android:background="#000066"
-            android:layout_marginTop="20dp"
-            android:paddingTop="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:textColor="@color/White"
-
-            android:layout_width="match_parent"
-            android:textStyle="italic"
-            android:layout_height="wrap_content"
-            android:text="@string/About" />
-
-
-        <TextView
-            android:id="@+id/tvMore"
-            android:layout_width="match_parent"
-            android:background="#000066"
-            android:padding="10dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/Blue"
-            android:text="          More...." />
-
-        <EditText
-        android:id="@+id/username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-android:textColorHighlight="@color/White"
-            android:text="friend@mgh.com"
-
-        android:layout_marginTop="66dp"
-
-
-        android:hint="Username"
-        android:textColor="@color/back"
-        android:inputType="textEmailAddress"
-        android:selectAllOnFocus="true"
+    <TextView
+        android:id="@+id/editTextTextPersonName"
+        android:layout_width="378dp"
+        android:layout_height="62dp"
+        android:background="#48161617"
+        android:fontFamily="sans-serif-black"
+        android:text="Ambulance Response Application"
+        android:textAlignment="center"
+        android:paddingTop="15dp"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/password"
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:layout_marginTop="8dp"
-android:text="12345"
-        android:textColor="@color/back"
-        android:hint="@string/prompt_password"
-        android:imeActionLabel="@string/action_sign_in_short"
-        android:imeOptions="actionDone"
-        android:textColorHighlight="@color/White"
-        android:inputType="textPassword"
-        android:selectAllOnFocus="true"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+        app:layout_constraintTop_toTopOf="parent">
 
 
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:background="#D3D0D0"
 
+            android:hint="\u00A0Username"
+
+
+            android:inputType="textEmailAddress"
+            android:selectAllOnFocus="true"
+            android:textColor="@color/back"
+            android:textColorHighlight="@color/DarkGray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:background="#D3D0D0"
+            android:hint="@string/prompt_password"
+            android:imeActionLabel="@string/action_sign_in_short"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:selectAllOnFocus="true"
+            android:textColor="@color/back"
+            android:textColorHighlight="@color/DarkGray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/username" />
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="2"
             android:layout_marginTop="60dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="2">
 
             <Button
                 android:id="@+id/login"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#000066"
+                android:layout_height="40dp"
                 android:layout_gravity="start"
                 android:layout_marginRight="1dp"
-                android:textColor="@color/White"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
                 android:text="SIGN IN"
+                android:textColor="@color/White"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -112,13 +103,13 @@ android:text="12345"
             <Button
                 android:id="@+id/register"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_gravity="start"
-                android:textColor="@color/White"
-                android:background="#000066"
-                android:layout_weight="1"
                 android:layout_marginLeft="1dp"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
                 android:text="SIGN UP"
+                android:textColor="@color/White"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -127,23 +118,21 @@ android:text="12345"
         </LinearLayout>
 
 
-
-    <ProgressBar
-        android:id="@+id/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="64dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/password"
-        app:layout_constraintStart_toStartOf="@+id/password"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3" />
-
+        <ProgressBar
+            android:id="@+id/loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="64dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/password"
+            app:layout_constraintStart_toStartOf="@+id/password"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.3" />
 
 
     </LinearLayout>

@@ -1,7 +1,9 @@
 package com.example.TakeMe.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -22,6 +24,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.TakeMe.MapsActivity;
 import com.example.TakeMe.Request;
 import com.example.sbag.R;
 
@@ -30,6 +33,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,13 +54,18 @@ public class RequestNotification extends Fragment {
     private RequestQueue mRequestQueue;
     private String ACTION_NOTIFICATION = "getNotification.php?id=";
     private String ACTION_DELETE_NOTIFICATION = "deleteRequest.php?id=";
+    private String ACTION_ACCEPT_FRIEND = "acceptfriend.php?id=";
     private StringRequest mStringRequest;
     private String data ="{}";
     private String host ;
     private ListView listView;
     private String ID;
-
+    private Button btnAction;
     private String MyPREFERENCES = "32145788";
+    private int request = -1;
+    private String [] status  = {"Waiting" , "Accepted","Collected" , "Delivered","Completed"};
+    private String [] bntstep = {"DELETE"  , "",""    , "" ,"DELETE"};
+    private String [] statusA   = {""       , "TRACK"   ,"TRACK" , "TRACK","TRACK"};
 
     public RequestNotification() {
         // Required empty public constructor
@@ -96,18 +106,20 @@ public class RequestNotification extends Fragment {
         listView= (ListView ) view.findViewById(R.id.lsNotification);
 
 
-        SharedPreferences preferences = this.getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        host ="";
+
+
+        SharedPreferences preferences = this.getActivity().getSharedPreferences(MyPREFERENCES, MODE_PRIVATE);
         data = preferences.getString("data", "{}");//"No name defined" is the default value.
         host = preferences.getString("host", "http://192.168.1.33/takeme/");
 
-//print(data);
         JSONArray jjsonArray = null;
         try {
             jjsonArray = new JSONArray(data);
             JSONObject jjsonObject = new JSONObject(jjsonArray.getJSONObject(0).toString());
 
             ID = jjsonObject.getString("ID");
-            print(host);
+
             sendAndRequestResponse(ACTION_NOTIFICATION + ID);
             ;
         } catch (JSONException e) {
@@ -122,7 +134,6 @@ public class RequestNotification extends Fragment {
     public class CustomListAdapter extends BaseAdapter {
         private Context context; //context
         private ArrayList<Request> notification; //data source of the list adapter
-        private int pos = 0;
 
         //public constructor
         public CustomListAdapter(Context context, ArrayList<Request> notification) {
@@ -146,16 +157,14 @@ public class RequestNotification extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, final ViewGroup parent) {
+        public View getView(final int position, View convertView, final ViewGroup parent) {
             // inflate the layout for each list row
             if (convertView == null) {
                 convertView = LayoutInflater.from(context).
                         inflate(R.layout.notification, parent, false);
             }
 
-            // get current item to be displayed
-            Request currentItem = (Request) getItem(position);
-
+            com.example.TakeMe.Request currentItem = (com.example.TakeMe.Request) getItem(position);
             // get the TextView for item name and item description
             TextView tvOwner = (TextView) convertView.findViewById(R.id.tvOwner);
             TextView tvType = (TextView) convertView.findViewById(R.id.tvType);
@@ -164,32 +173,106 @@ public class RequestNotification extends Fragment {
 
             tvOwner.setText(notification.get(position).requester);
             tvType.setText(notification.get(position).type);
-            tvResponse.setText(notification.get(position).response);
+            tvResponse.setText(status[notification.get(position).status] + notification.get(position).NextOfKinName);
             tvDate.setText(notification.get(position).date);
-            pos = position;
 
-            Button btnView = (Button) convertView.findViewById(R.id.btnView);
+            final String nID = notification.get(position).ID + "";
+            final String driverID = notification.get(position).toID + "";
 
-            btnView.setOnClickListener(new View.OnClickListener() {
+            final Button btnDelete = (Button) convertView.findViewById(R.id.btnDelete);
+            btnAction = (Button) convertView.findViewById(R.id.btnAction);
+            btnAction.setText(statusA[notification.get(position).status]);
+
+
+            btnDelete.setText(bntstep[notification.get(position).status]);
+            btnAction.setText(statusA[notification.get(position).status]);
+
+
+            if (statusA[notification.get(position).status].equals("")) {
+                btnAction.setVisibility(View.INVISIBLE);
+            }
+
+            if (notification.get(position).type.equals("Friend request")){
+                btnAction.setVisibility(View.INVISIBLE);
+                if(notification.get(position).toID.equals(ID)){
+
+                    if(notification.get(position).status == 0){
+                        btnDelete.setText("Accept");
+                    }else {
+                        btnDelete.setText("DELETE");
+                    }
+                }else{
+                    btnDelete.setText("DELETE");
+                }
+
+             }else {
+
+            }
+
+            if(notification.get(position).toID.equals(ID)){
+
+                if(notification.get(position).status == 0){
+                    btnDelete.setText("Accept");
+                }else {
+                    btnDelete.setText("DELETE");
+                }
+            }
+
+            if(btnDelete.getText().toString().equals("")){
+                btnDelete.setVisibility(View.INVISIBLE);
+            }
+
+            btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    print("View notification");
+                    if(btnDelete.getText().toString() .toUpperCase(). equals("ACCEPT")){
+
+                        print("Accepting Request....");
+                        sendAndRequestResponse(ACTION_ACCEPT_FRIEND + nID);
+                    }else if(btnDelete.getText().toString().toUpperCase() . equals("DELETE")){
+                        print("Deleting Request....");
+                        sendAndRequestResponse(ACTION_DELETE_NOTIFICATION + nID);
+                    }
+
                 }
             });
 
-            Button btnAction = (Button) convertView.findViewById(R.id.btnAction);
-
-            btnAction.setText(notification.get(position).action);
+            //
 
             btnAction.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View v) { //driverID
 
-                    sendAndRequestResponse(ACTION_DELETE_NOTIFICATION + notification.get(pos).ID);
+                    if(btnAction.getText().toString().toString().toUpperCase().equals("TRACK")) {
+
+                        SharedPreferences.Editor editor = getActivity().getSharedPreferences(MyPREFERENCES, MODE_PRIVATE).edit();
+                        editor.putString ("driverID", driverID );
+                        editor.commit();
+                        Intent intentf = new Intent(getContext(), MapsActivity.class);
+
+                        startActivity(intentf);
+
+
+
+                    }
 
 
                 }
             });
+
+
+
+
+/*
+
+            btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    sendAndRequestResponse(ACTION_DELETE_NOTIFICATION + nID);
+
+                }
+            });*/
 
             // returns the view for the current row
             return convertView;
@@ -204,44 +287,116 @@ public class RequestNotification extends Fragment {
         //RequestQueue initialized
         mRequestQueue = Volley.newRequestQueue(getContext());
         url = host + url;
+       // print(url);
 
-        print(url);
         //String Request initialized
         mStringRequest = new StringRequest(com.android.volley.Request.Method.GET, url, new Response.Listener<String>() {
             @Override
+
+
             public void onResponse(String response) {
-
-
+//print(response);
                 if(response != null ) {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         if( jsonObject.getString("result").equals("done")) {
 
-
                              if(jsonObject.getString("datatype").equals("notification")){
 
-
                                  ArrayList<Request> itemsArrayList = new ArrayList<>(1); // calls function to get items list
+                                 request = -1;
 
                                 for(int x = 0 ; x < jsonObject.getJSONArray("data").length() ; x++){
 
                                     String status = "";
-                                    if (jsonObject.getJSONArray("data").getJSONObject(x).getString("NSTATUS").equals("Accepted")) {
-                                         status = jsonObject.getJSONArray("data").getJSONObject(x).getString("DNAME") + " Accepted";
-                                    }
-                                    else {
-                                         status = jsonObject.getJSONArray("data").getJSONObject(x).getString("NSTATUS");
+                                    String requester = "";
+                                    int ipStatus = jsonObject.getJSONArray("data").getJSONObject(x).getInt("NSTATUS");
+                                    String driver   = jsonObject.getJSONArray("data").getJSONObject(x).getString("DNAME");
+                                    String ipType   = jsonObject.getJSONArray("data").getJSONObject(x).getString("NTYPE");
+                                    String requesterN     = jsonObject.getJSONArray("data").getJSONObject(x).getString("RNAME");
+                                    String to       = jsonObject.getJSONArray("data").getJSONObject(x).getString("TNAME");
+                                    String toID       = jsonObject.getJSONArray("data").getJSONObject(x).getString("TOID");
+                                    String fromN  = jsonObject.getJSONArray("data").getJSONObject(x).getString("PName");
+
+                                   // status = jsonObject.getJSONArray("data").getJSONObject(x).getString("NSTATUS");
+                                    String statuslabel = "";
+
+                                   // print(ipType);
+
+                                    if(ipType.equals("Ambulance request")){
+                                        requester = requesterN + " requested for " + fromN;
+                                        if(ipStatus == 0){
+
+                                        }else {
+                                            statuslabel = " by " + driver;
+                                         }
+
+
+                                    }else if(ipType.equals("Friend request")) {
+                                        requester = "To " + to;
+
+                                        if(ipStatus == 0){
+
+                                        }else {
+                                            statuslabel = " by " + to;
+                                        }
+
                                     }
 
+
+/*
+                                    if(ipType.equals("Ambulance request")){
+                                        requester = requesterN + " requested for " + fromN;
+
+                                        if (ipStatus.equals("Accepted")) {
+                                            status = driver + " Accepted";
+
+                                        }else {
+                                            action = "";
+                                        }
+
+                                    }else if(ipType.equals("Friend request")) {
+
+                                        requester = "To " + to;
+                                        action = "";
+
+
+                                        if (ipStatus.equals("Accepted")) {
+                                            status = to + " Accepted";
+
+                                        }
+
+                                        if(toID.equals(ID)){
+                                         //   action = "ACCEPT";
+                                            requester = "From " + fromN;
+                                            action = "ACCEPT";
+
+                                            if (ipStatus.equals("Accepted")) {
+                                                status = "I Accepted";
+                                                action = "";
+                                            }
+                                        }
+                                    }
+*/
+                                    double lat = 0, lon = 0;
+                                    if(!jsonObject.getJSONArray("data").getJSONObject(x).getString("Latitude").equals("null")){
+
+                                        lat =  jsonObject.getJSONArray("data").getJSONObject(x).getDouble("Latitude");
+                                        lon =  jsonObject.getJSONArray("data").getJSONObject(x).getDouble("Longitude");
+                                    }
+
+
                                     Request  request = new Request(
-                                            jsonObject.getJSONArray("data").getJSONObject(x).getString("RNAME") +
-                                                    " requested for " +
-                                                    jsonObject.getJSONArray("data").getJSONObject(x).getString("PName"),
+                                            requester,
                                             jsonObject.getJSONArray("data").getJSONObject(x).getString("NTYPE"),
-                                            status,
+                                            ipStatus,
                                             jsonObject.getJSONArray("data").getJSONObject(x).getString("Date"),
-                                            "Delete",
-                                            jsonObject.getJSONArray("data").getJSONObject(x).getString("NOTID")
+                                            jsonObject.getJSONArray("data").getJSONObject(x).getString("NOTID"),
+                                            lat,
+                                            lon,
+                                            statuslabel,
+                                            "",
+                                            toID
 
                                     );
 
@@ -255,8 +410,13 @@ public class RequestNotification extends Fragment {
 
                             }else if(jsonObject.getString("datatype").equals("deleteRequest")){
                               //  notification.get(pos).ID
+                                 if(request > -1)
+                                     listView.setAdapter(null);
                                  sendAndRequestResponse(ACTION_NOTIFICATION + ID);
-                            }
+                            }else if(jsonObject.getString("datatype").equals("acceptfriend")){
+                                 //  notification.get(pos).ID
+                                 sendAndRequestResponse(ACTION_NOTIFICATION + ID);
+                             }
 
                         }else {
                             print(jsonObject.getString("error"));

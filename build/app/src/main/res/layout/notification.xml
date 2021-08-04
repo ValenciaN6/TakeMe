@@ -62,18 +62,18 @@
                 android:text="10/08/2021 22:41" />
 
             <Button
-                android:id="@+id/btnView"
+                android:id="@+id/btnAction"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_weight="1"
                 android:paddingRight="2dp"
                 android:textColor="@color/White"
                 android:layout_marginRight="2dp"
-                android:background="#000066"
+                android:background="@color/colorPrimary"
                 android:text="VIEW" />
 
             <Button
-                android:id="@+id/btnAction"
+                android:id="@+id/btnDelete"
                 android:paddingLeft="2dp"
                 android:layout_marginLeft="2dp"
                 android:layout_width="wrap_content"
@@ -81,7 +81,7 @@
                 android:textColor="@color/White"
                 android:layout_weight="1"
                 android:background="#E31D84"
-                android:text="btnDelete" />
+                android:text="DELETE" />
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

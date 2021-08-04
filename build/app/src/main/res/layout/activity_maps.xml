@@ -17,16 +17,7 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="wrap_content">
-        <SearchView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/sv_location"
-            android:queryHint="Search...."
-            android:iconifiedByDefault="false"
-            android:layout_margin="10dp"
-            android:elevation="5dp"
-            android:background="@color/back"
-            />
+
         <TextView
             android:id="@+id/tvStates"
             android:layout_margin="10dp"

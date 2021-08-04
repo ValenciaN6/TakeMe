@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.TakeMe.Fragments.RequestSettings">
 
     <!-- TODO: Update blank fragment layout -->
@@ -10,41 +11,113 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="5"
+        android:weightSum="8"
         android:orientation="vertical">
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="4"
             android:orientation="vertical">
 
-            <ScrollView
-                android:layout_width="match_parent"
-                android:paddingBottom="50dp"
-                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
 
                     <ListView
                         android:id="@+id/lsFriend"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:layout_marginTop="10dp" />
                 </LinearLayout>
-            </ScrollView>
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:orientation="vertical"></LinearLayout>
+            android:layout_weight="4"
+            android:weightSum="3"
+            android:orientation="vertical">
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:cardElevation="10dp"
+
+                    app:cardCornerRadius="20dp"
+                    android:layout_margin="10dp"
+
+                    app:cardMaxElevation="12dp"
+
+                    app:cardPreventCornerOverlap="true"
+
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:weightSum="10"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorPrimary"
+                            android:textStyle="bold"
+
+                            android:textAlignment="center"
+                            android:text="Send a friend request, by clicking on the person "
+                            android:gravity="center_horizontal" />
+                        <ListView
+                            android:id="@+id/listview"
+                            android:layout_weight="3"
+                            android:layout_width="fill_parent"
+                            android:layout_height="match_parent"
+                            android:layout_below="@+id/search" />
+
+                        <SearchView
+                            android:id="@+id/search"
+                            android:layout_weight="7"
+                            android:layout_width="fill_parent"
+                            android:layout_height="match_parent"
+                            android:iconifiedByDefault="false">
+                            <requestFocus />
+                        </SearchView>
+
+                    </LinearLayout>
+
+
+
+
+
+                </androidx.cardview.widget.CardView>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:layout_weight="2"
+                android:orientation="horizontal"></LinearLayout>
+
+        </LinearLayout>
+
+
+
     </LinearLayout>
 
 

@@ -38,10 +38,10 @@
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="24dp"
-                        android:textColor="@color/back"
                         android:hint="Name"
                         android:inputType="textPersonName"
-                        android:selectAllOnFocus="true" />
+                        android:selectAllOnFocus="true"
+                        android:textColor="@color/back" />
 
                     <EditText
                         android:id="@+id/edtSurname"
@@ -50,10 +50,10 @@
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="24dp"
-                        android:textColor="@color/back"
                         android:hint="Surname"
                         android:inputType="textPersonName"
-                        android:selectAllOnFocus="true" />
+                        android:selectAllOnFocus="true"
+                        android:textColor="@color/back" />
 
                     <EditText
                         android:id="@+id/edtEmail"
@@ -62,11 +62,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="10dp"
-                        android:textColor="@color/back"
                         android:layout_marginEnd="24dp"
                         android:hint="Email"
                         android:inputType="textEmailAddress"
-                        android:selectAllOnFocus="false" />
+                        android:selectAllOnFocus="false"
+                        android:textColor="@color/back" />
 
                     <EditText
                         android:id="@+id/edtPhone"
@@ -74,11 +74,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="10dp"
-                        android:textColor="@color/back"
                         android:layout_marginEnd="24dp"
                         android:hint="Phone Number"
-                        android:inputType="number"
-                        android:selectAllOnFocus="true" />
+                        android:inputType="phone"
+                        android:selectAllOnFocus="true"
+                        android:textColor="@color/back" />
 
                     <EditText
                         android:id="@+id/edtPass"
@@ -87,11 +87,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="10dp"
-                        android:textColor="@color/back"
                         android:layout_marginEnd="24dp"
                         android:hint="Password"
                         android:inputType="textPassword"
-                        android:selectAllOnFocus="false" />
+                        android:selectAllOnFocus="false"
+                        android:textColor="@color/back" />
 
                     <EditText
                         android:id="@+id/edtPassC"
@@ -100,11 +100,64 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="10dp"
-                        android:textColor="@color/back"
                         android:layout_marginEnd="24dp"
                         android:hint="Confirm Password"
                         android:inputType="textPassword"
-                        android:selectAllOnFocus="false" />
+                        android:selectAllOnFocus="false"
+                        android:textColor="@color/back" />
+
+                    <EditText
+                        android:id="@+id/edtCarNumber"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="24dp"
+                        android:hint="Number plate"
+                        android:inputType="text"
+                        android:selectAllOnFocus="false"
+                        android:textColor="@color/back" />
+
+                    <EditText
+                        android:id="@+id/edtCar"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="24dp"
+                        android:hint="Car description(White VW Van)"
+                        android:inputType="text"
+                        android:selectAllOnFocus="false"
+                        android:textColor="@color/back" />
+                    <EditText
+                        android:id="@+id/edtNextOfName"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="24dp"
+                        android:hint="Next of kin name"
+                        android:inputType="textPersonName"
+                        android:selectAllOnFocus="false"
+                        android:textColor="@color/back" />
+
+                    <EditText
+                        android:id="@+id/edtNextOfCell"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="24dp"
+                        android:hint="Next of kin cell number"
+                        android:inputType="phone"
+                        android:selectAllOnFocus="false"
+                        android:textColor="@color/back" />
+
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -120,7 +173,6 @@
                             android:layout_height="40dp" />
 
                     </LinearLayout>
-
 
 
                 </LinearLayout>
@@ -139,37 +191,11 @@
                 android:orientation="horizontal"
                 android:weightSum="2"
 
-                android:layout_height="wrap_content" >
-
-                <Button
-                    android:id="@+id/btnPolicy"
-                    android:layout_weight="1"
-                    android:background="#000066"
-                    android:textColor="@color/White"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginRight="2dp"
-                    android:text="Policy" />
-
-                <Button
-                    android:id="@+id/btnTandC"
-                    android:layout_weight="1"
-                    android:background="@color/back"
-                    android:textColor="@color/White"
-                    android:layout_width="match_parent"
-                    android:layout_marginLeft="2dp"
-                    android:layout_height="30dp"
-                    android:layout_marginRight="24dp"
-                    android:layout_marginTop="40dp"
-                    android:text="T and C" />
-
-            </LinearLayout>
+                android:layout_height="wrap_content" />
 
             <Button
                 android:id="@+id/btnSubmit"
-                android:background="@color/back"
+                android:background="@color/colorPrimary"
                 android:textColor="@color/White"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

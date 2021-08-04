@@ -57,18 +57,28 @@ public class NotificationService extends Service{
 
     private String id;
     private String host;
-    private String MyPREFERENCES                 = "321qwe" ;
+    private String MyPREFERENCES                 = "32145788" ;
     private String ACTION_GETLOCATION            = "getlocation.php?id=";
     private String ACTION_UPDATE_LOCATION        = "updatelocation.php?id=";
-    private String ID_SPECIAL_OFFER_NOTIFICATION = "1234";
+    private String ID_SPECIAL_OFFER_NOTIFICATION = "1236";
 
     private Location currentLooation;
+    private String UserType;
+    private double ader;
 
     public  static void ServiceBegin(Context contex){
         intent = new Intent(contex,NotificationService.class);
         context = contex;
         contex.startService(intent);
+
     }
+
+    public static  void ServiceStop(Context contex){
+        intent = new Intent(contex,NotificationService.class);
+        context = contex;
+        context.stopService(intent);
+    }
+
 
     public NotificationService(){
     }
@@ -104,32 +114,9 @@ public class NotificationService extends Service{
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         id = sharedpreferences.getString("id","0");
 
-        host = sharedpreferences.getString("host","http://192.168.0.116/thermo/");
+        host = sharedpreferences.getString("host","http://192.168.1.33/takeme/");
+        UserType = sharedpreferences.getString("UserType","1");
 
-        //start = true;
-        t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Reminder++;
-
-                        if(id != null)
-                        if(!id.equals("0"))
-                          sendAndRequestResponse(ACTION_GETLOCATION + id);
-
-                        if(Reminder >= 10) {
-                            Reminder = 0;
-                            setNotification(R.drawable.sanitize, "Reminder", "Sanitize your hand and update temperature", LoginActivity.class);
-                        }
-                        handler.postDelayed(this,5000);
-                    }
-                },1);
-            }
-        });
-        t.start();
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -140,8 +127,7 @@ public class NotificationService extends Service{
                     Manifest.permission.ACCESS_FINE_LOCATION }, 1);
             return;
         }
-        locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 500, 1, locationListener);
-
+        locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 5000, 1, locationListener);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -153,27 +139,10 @@ public class NotificationService extends Service{
 
             return;
         }
-         locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 200, 1, locationListener);
+         locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 2000, 1, locationListener);
 
     }
-/*
-    private class MyLocationListener implements LocationListener {
 
-        @Override
-        public void onLocationChanged(Location loc) {
-
-          print(loc.getLongitude() + "");
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {}
-
-        @Override
-        public void onProviderEnabled(String provider) {}
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
-    }*/
 
     private class MyLocationListener implements LocationListener {
 
@@ -182,13 +151,16 @@ public class NotificationService extends Service{
 
            start = true;
             currentLooation = loc;
+            SharedPreferences sharedpreferences;
+            sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+            id = sharedpreferences.getString("id","0");
+
+           // print("lon:"  + (currentLooation.getLongitude() + ader));
 
             sendAndRequestResponse(ACTION_UPDATE_LOCATION + id
-                                     + "&lon=" + currentLooation.getLongitude()
-                                     + "&lat=" + currentLooation.getLatitude());
-
-
-
+                                     + "&lon=" + (currentLooation.getLongitude() )
+                                     + "&lat=" + currentLooation.getLatitude()
+                                     + "&tp="  + UserType);
 
         }
 
@@ -204,48 +176,30 @@ public class NotificationService extends Service{
 
     private void sendAndRequestResponse(String url) {
 
-       // print(host);
-
         mRequestQueue = Volley.newRequestQueue(getApplicationContext());
         url = host + url;
-
 
         //String Request initialized
         mStringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                if(response != null ) {
+                if (response != null) {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
-                        if( jsonObject.getString("result").equals("done")) {
+                        if (jsonObject.getString("result").equals("done")) {
 
-                            JSONArray jsonArray = jsonObject.getJSONArray("data");
+                            if(jsonObject.getString("datatype").equals("updatelocation")) {
 
-                            location = new Location("");
-
-                             if(start) {
-
-                                 for(int x = 0; x < jsonArray.length() ; x++) {
-                                    location.setLongitude(jsonArray.getJSONObject(x).getDouble("lon"));
-                                    location.setLatitude(jsonArray.getJSONObject(x).getDouble("lat"));
-                                    Float distance = location.distanceTo(currentLooation);
-                                    if (distance <= 5 ){
-                                      //  print("distance:" + distance);
-                                        setNotification(R.drawable.social_distancing,"Social Distancing","Stay 1m away from the next person",LoginActivity.class);
-                                        break;
-                                    }
-
-                                }
+                                SharedPreferences.Editor editor = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE).edit();
+                                editor.putString ("data", jsonObject.getJSONArray("data").toString() );
+                                editor.apply();
                             }
 
-                        }else {
-
-                        }
-
-
-                    } catch (JSONException e) { e.printStackTrace(); }
-
+                            }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }, new Response.ErrorListener() {
@@ -257,55 +211,6 @@ public class NotificationService extends Service{
         });
 
         mRequestQueue.add(mStringRequest);
-    }
-
-    private void setNotification(int icon,String title, String mssg, Class pendclass){
-        Intent intent = new Intent(getApplicationContext(), pendclass /* LoginActivity.class*/);
-        PendingIntent pendIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
-        showSmallNotification(icon, title , mssg , "2020/02/01" , pendIntent);
-    }
-
-
-    private void showSmallNotification( int icon, String title, String message, String timeStamp, PendingIntent resultPendingIntent){
-        String CHANNEL_ID = "1234";
-        String CHANNEL_NAME = "Notification";
-
-        // I removed one of the semi-colons in the next line of code
-        NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-
-        inboxStyle.addLine(message);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // I would suggest that you use IMPORTANCE_DEFAULT instead of IMPORTANCE_HIGH
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
-            channel.enableVibration(true);
-            channel.setLightColor(Color.BLUE);
-            channel.enableLights(true);
-            channel.setShowBadge(true);
-            notificationManager.createNotificationChannel(channel);
-        }
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                .setVibrate(new long[]{0, 100})
-                .setPriority(android.app.Notification.PRIORITY_MAX)
-                .setLights(Color.BLUE, 3000, 3000)
-                .setAutoCancel(true)
-                .setContentTitle(title)
-                .setContentIntent(resultPendingIntent)
-                // .setWhen(getTimeMilliSec(timeStamp))
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setStyle(inboxStyle)
-                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), icon))
-                .setContentText(message);
-        // Removed .build() since you use it below...no need to build it twice
-
-        // Don't forget to set the ChannelID!!
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            notificationBuilder.setChannelId(ID_SPECIAL_OFFER_NOTIFICATION);
-        }
-
-        notificationManager.notify(CHANNEL_ID, 1, notificationBuilder.build());
     }
 
     private void print(String stringJson) {

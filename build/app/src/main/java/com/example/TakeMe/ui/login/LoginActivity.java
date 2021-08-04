@@ -1,5 +1,6 @@
 package com.example.TakeMe.ui.login;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,9 +26,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.TakeMe.MainFrag;
+import com.example.TakeMe.MapsActivity;
 import com.example.TakeMe.NotificationService;
 import com.example.TakeMe.Register;
 import com.example.sbag.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     private String MyPREFERENCES = "32145788";
     private String type = "patient";
     private RequestQueue mRequestQueue;
-    private String host = "http://192.168.8.171:8081/takeme/";
+    private String host = "http://10.0.0.103/takeme/";
     private StringRequest mStringRequest;
     private String ACTION_LOGIN = "login.php?";
 
@@ -48,34 +51,17 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        NotificationService.ServiceStop(getApplication());
         Button signIn = (Button)findViewById(R.id.login);
         Button register = (Button)findViewById(R.id.register);
         loading = (ProgressBar)findViewById(R.id.loading);
-        TextView more = (TextView)findViewById(R.id.tvMore);
 
         String [] UsageType = {"Patient" , "Driver" ,"Company"};
 
-
-
-
-        more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                new AlertDialog.Builder(LoginActivity.this)
-                        .setTitle("More")
-                        .setMessage(R.string.more)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        })
-                        .show();
-
-            }
-        });
-
+        SharedPreferences.Editor editor = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE).edit();
+        editor.putString ("host", host );
+        editor.commit();
+        
         loading.setVisibility(View.GONE);
 
         signIn.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +90,18 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
+        SharedPreferences preferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
+        String data = preferences.getString("data", "{}");//"No name defined" is the default value.
+
+        if(!data.equals("{}") ){
+            Intent intent = new Intent(getApplicationContext() , MainFrag.class);
+           // NotificationService.ServiceBegin(getApplication());
+            startActivity(intent);
+        }
+
+
     }
 
 
@@ -126,15 +124,15 @@ public class LoginActivity extends AppCompatActivity {
 
                         loading.setVisibility(View.GONE);
 
-
                         Intent intent = new Intent(getApplicationContext() , MainFrag.class);  // MainFrag().getClass();
                         SharedPreferences.Editor editor = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE).edit();
                         editor.putString ("data", jsonObject.getJSONArray("data").toString() );
                         editor.putString ("host", host );
                         editor.putString ("id", jsonObject.getJSONArray("data").getJSONObject(0).getString("ID") );
+                        editor.putString ("UserType", jsonObject.getJSONArray("data").getJSONObject(0).getString("UserType") );
                         editor.apply();
 
-                       // NotificationService.ServiceBegin(getApplication());
+
                         startActivity(intent);
 
                     }else {
@@ -175,12 +173,6 @@ public class LoginActivity extends AppCompatActivity {
             String zip = addresses.get(0).getPostalCode();
             String country = addresses.get(0).getCountryName();
 
-            /*strAdd = "address:" + address + "\n"
-                    + "state:" + state + "\n"
-                    + "zip:" + zip + "\n"
-                    + "country:" + country + "\n";
-
-            print("city:" + city);*/
         } catch (Exception e) {
             e.printStackTrace();
           //  Log.w("My Current loction address", "Canont get Address!");
@@ -188,93 +180,6 @@ public class LoginActivity extends AppCompatActivity {
         return strAdd;
     }
 
-/*
-    public class HttpGetRequest extends AsyncTask<String, Void, String> {
-        public static final String REQUEST_METHOD = "GET";
-        public static final int READ_TIMEOUT = 15000;
-        public static final int CONNECTION_TIMEOUT = 15000;
-
-
-        @Override
-        protected String doInBackground(String... params){
-            String stringUrl = params[0];
-            String result = "";
-
-            String inputLine;
-            try {
-                //Create a URL object holding our url
-                URL myUrl = new URL(stringUrl);
-                //Create a connection
-                HttpURLConnection connection =(HttpURLConnection)
-                        myUrl.openConnection();
-                //Set methods and timeouts
-                connection.setRequestMethod(REQUEST_METHOD);
-                connection.setReadTimeout(READ_TIMEOUT);
-                connection.setConnectTimeout(CONNECTION_TIMEOUT);
-
-                //Connect to our url
-                connection.connect();
-                //Create a new InputStreamReader
-                InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
-                //Create a new buffered reader and String Builder
-                BufferedReader reader = new BufferedReader(streamReader);
-                StringBuilder stringBuilder = new StringBuilder();
-                //Check if the line we are reading is not null
-                while((inputLine = reader.readLine()) != null){
-                    stringBuilder.append(inputLine);
-                }
-                //Close our InputStream and Buffered reader
-                reader.close();
-                streamReader.close();
-                result = stringBuilder.toString();
-            }
-            catch(IOException e){
-                e.printStackTrace();
-                result = null;
-            }
-
-            return result;
-        }
-
-
-        protected void onPostExecute(String result){
-            super.onPostExecute(result);
-
-            print(result);
-
-            if(result != null ) {
-                try {
-                    JSONObject jsonObject = new JSONObject(result);
-                    if( jsonObject.getString("result").equals("done")) {
-
-                        loading.setVisibility(View.GONE);
-
-                       Intent intent = new Intent(getApplicationContext() , MainFrag.class);  // MainFrag().getClass();
-                        SharedPreferences.Editor editor = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE).edit();
-                        editor.putString ("data", result );
-                        editor.putString ("host", host );
-                        editor.apply();
-                       startActivity(intent);
-
-                    }else {
-                        print("User do not exist (◕︵◕)" );
-                        loading.setVisibility(View.GONE);
-                    }
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    loading.setVisibility(View.GONE);
-                }
-
-
-            }else {
-                print("Can not connect to server (◕︵◕)" );
-                loading.setVisibility(View.GONE);
-            }
-        }
-    }
-*/
     private void print(String position) {
         Toast.makeText(getApplicationContext(),position, Toast.LENGTH_SHORT).show();
     }

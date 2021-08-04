@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.TakeMe.ui.login.LoginActivity;
 import com.example.sbag.R;
 
 import org.json.JSONException;
@@ -39,11 +40,15 @@ import java.util.regex.Pattern;
 
 public class Register extends AppCompatActivity {
 
-    private  String [] typeList = {"Ambulance Driver","Ambulance Requester"};
-    private  String userType = typeList[0];
-    private  EditText edtEmail,edtName,edtSurname,  edtPass,edtPhone,edtPassc;
-    private String username = "",surname = "", email = "", pass = "", phone = "" , longitude="0" , latitude = "0.0", passc, host;
-    private String MyPREFERENCES = "321qwe" ,ACTIOB_ADDUSER = "adduser.php?";
+    private  String [] typeList = {"Patient","Ambulance Driver"};
+    private  String userType = "1";
+    private  EditText edtEmail,edtName,edtSurname,  edtPass,edtPhone,edtPassc,edtNextName,edtNextCell;
+    private String username = "",surname = "", email = "", pass = "", phone = "" , longitude="0" , latitude = "0.0", passc, host , nextCell,nextName;
+
+    private String MyPREFERENCES = "32145788" ,ACTIOB_ADDUSER = "adduser.php?";
+    private EditText edtDescription;
+    private EditText edtCarNum;
+    private String plate , carDesci;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -52,8 +57,6 @@ public class Register extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         Button btnSubmit = (Button)findViewById(R.id.btnSubmit);
-        Button btnPolicy = (Button)findViewById(R.id.btnPolicy);
-        Button btnTandC = (Button)findViewById(R.id.btnTandC);
 
         edtEmail    = (EditText)findViewById(R.id.edtEmail);
         edtName = (EditText)findViewById(R.id.edtname);
@@ -62,29 +65,15 @@ public class Register extends AppCompatActivity {
         edtPass     = (EditText)findViewById(R.id.edtPass);
         edtPassc     = (EditText)findViewById(R.id.edtPassC);
 
+        edtDescription = (EditText)findViewById(R.id.edtCar);
+        edtCarNum     = (EditText)findViewById(R.id.edtCarNumber);
+
+        edtNextName = (EditText)findViewById(R.id.edtNextOfName);
+        edtNextCell     = (EditText)findViewById(R.id.edtNextOfCell);
+
         SharedPreferences sharedpreferences;
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         host = sharedpreferences.getString("host","");
-
-
-        btnPolicy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                print("Downloading policy");
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(host + "policy_doc/policy.pdf")));
-
-            }
-        });
-
-        btnTandC.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                print("Downloading terms and conditions");
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(host + "policy_doc/terms_conditions.pdf")));
-
-            }
-        });
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +88,43 @@ public class Register extends AppCompatActivity {
                 passc    = edtPassc.getText().toString();
                 email    = edtEmail.getText().toString();
 
+                plate    = edtCarNum.getText().toString();
+                carDesci    = edtDescription.getText().toString();
+                nextCell = edtNextCell.getText().toString();
+                nextName = edtNextName.getText().toString();
+
+                boolean eerror = false;
+
+              if(userType.equals("2")) {
+                  if(!validateName(plate)){
+                      edtCarNum.setError("Invalid Number plate");
+                      eerror = true;
+                  }
+
+                  if(!validateName(carDesci)){
+                      edtDescription.setError("Invalid car description");
+                      eerror = true;
+                  }
+
+
+              }
+
+                if(userType.equals("1")) {
+                    if(!validatCell(nextCell)){
+                        edtNextCell.setError("Invalid next of kin Cell");
+                        eerror = true;
+                    }
+
+                    if(!validateName(nextName)){
+                        edtDescription.setError("Invalid next of kin name");
+                        eerror = true;
+                    }
+
+
+                }
+              if(eerror){
+
+                }else
               if(!validateName(username)){
                     edtName.setError("Invalid name, the length should be greater than 2");
                 }
@@ -119,15 +145,18 @@ public class Register extends AppCompatActivity {
                  {
                     try {
                         String url = ACTIOB_ADDUSER +
-                                "nm="     + username     +
-                                "&em="    + email    +
-                                "&sn="    + surname     +
-                                "&pn="    + phone +
-                                "&ut="    + userType   +
-                                "&pw="    + pass      +
-
-                                "&la="      + latitude +
-                                "&lo="      + longitude;
+                                    "nm="     + username +
+                                    "&em="    + email    +
+                                    "&sn="    + surname  +
+                                    "&pn="    + phone    +
+                                    "&ut="    + userType +
+                                    "&pw="    + pass     +
+                                    "&la="    + latitude +
+                                    "&lo="    + longitude+
+                                    "&cr="    + plate    +
+                                    "&dc="    + carDesci +
+                                    "&nnm="    + nextName+
+                                    "&nc="    + nextCell ;
 
                         print("Registering...");
 
@@ -146,7 +175,20 @@ public class Register extends AppCompatActivity {
         spType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                userType = typeList[position];
+                userType = ( position + 1 ) + "";
+                if(position == 1){
+                    edtCarNum.setVisibility(View.VISIBLE);
+                    edtDescription.setVisibility(View.VISIBLE);
+
+                    edtNextCell.setVisibility(View.GONE);
+                    edtNextName.setVisibility(View.GONE);
+                }else {
+                    edtCarNum.setVisibility(View.GONE);
+                    edtDescription.setVisibility(View.GONE);
+
+                    edtNextCell.setVisibility(View.VISIBLE);
+                    edtNextName.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -183,8 +225,25 @@ public class Register extends AppCompatActivity {
         return true;
     }
 
-    private void print(String position) {
-        Toast.makeText(getApplicationContext(),position, Toast.LENGTH_SHORT).show();
+    private boolean validatCell(String cell){
+        if (cell.length() != 10){
+            edtPass.setError("Cell Number should have 10 digits");
+            return false;
+        }
+
+        if (cell.charAt(0) != '0'){
+            edtPass.setError("Invalid cell namber");
+            return false;
+        }
+        return true;
+    }
+
+    private void printlog(String tag, String txt){
+        Log.i(tag, txt);
+    }
+    private void print(String response) {
+        Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
+        printlog("response:" , response);
     }
 
     private boolean validateName(String iname){
@@ -244,7 +303,6 @@ public class Register extends AppCompatActivity {
             }
             catch(IOException e){
                 e.printStackTrace();
-                // print(e.getMessage().toString());
                 result = null;
             }
 
@@ -267,6 +325,12 @@ public class Register extends AppCompatActivity {
                         edtPhone.setText("");
                         edtName.setText("");
                         edtPassc.setText("");
+
+                        SharedPreferences.Editor editor = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE).edit();
+                        editor.clear();
+                        editor.commit();
+                        Intent intent = new Intent(getApplicationContext() , LoginActivity.class);
+                        startActivity(intent);
                     }else {
 
                         if(jsonObject.getString("error").indexOf("Email") >= 0){

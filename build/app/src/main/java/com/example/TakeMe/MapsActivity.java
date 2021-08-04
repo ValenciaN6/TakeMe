@@ -4,13 +4,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,30 +34,48 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.security.AccessController.getContext;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private String MyPREFERENCES = "321qwe";
-    private SearchView searchView;
+    private String MyPREFERENCES = "32145788";
     private TextView tvStates;
+    private Thread t;
+    private Handler handler = new Handler();
     private String location;
     private Location gpslocation;
-    private String ACTION_GET_USERTEMP = "getSymptoms.php?";
+    private String ACTION_TRACK = "track.php?pid=";
     private String cUsers              = "";
     private String cUserTemp = "Loading.... \n try again later!";
     private RequestQueue mRequestQueue;
     private StringRequest mStringRequest;
+    private String driverID ;
     private String host ;
+    private String ID;
     private int iNotSafe ;
     private double dSum = 0;
+    private boolean isMapReady = false;
+    private  Polyline polyline;
+    private String route = "";
+    private String directionUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,199 +85,74 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+    //    print(url);
+     //   print(url);
+       // sendAndRequestResponse(url);
+
         SharedPreferences prefs = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE);
-        host = prefs.getString("host", "http://192.168.0.116/thermo/");
-
-        searchView = (SearchView)findViewById(R.id.sv_location);
+        host = prefs.getString("host", "");
+        driverID = prefs.getString("driverID", "17");
+        String data = prefs.getString("data", "{}");//"No name defined" is the default value.
         tvStates   = (TextView) findViewById(R.id.tvStates);
+       // tvStates.setText("..");
 
-        tvStates.setOnClickListener(new View.OnClickListener() {
+
+        t = new Thread(new Runnable() {
             @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(MapsActivity.this)
-                        .setTitle("User Temperature")
-                        .setMessage(cUserTemp)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
+            public void run() {
 
-                            }
-                        })
-                        .show();
-            }
-        });
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(getContext() != null)
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                String clocation = searchView.getQuery().toString();
-
-                List<Address> addressList = null;
-
-                if(location != null || !location.equals("")){
-
-                    Geocoder geocoder = new Geocoder(MapsActivity.this );
-                    try {
-                        addressList = geocoder.getFromLocationName(clocation, 1);
-
-                        if(addressList.size() > 0) {
-                            Address address = addressList.get(0);
-                            String addresse = address.getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                            String city = address.getLocality();
-                            String state = address.getAdminArea();
-                            String country = address.getCountryName();
-                            String postalCode = address.getPostalCode();
-                            String knownName = address.getFeatureName();
-
-                           // address.
-                            String data = "city:"   + city + "\n"
-                                        + "state:"   + state + "\n"
-                                        + "address:" + addresse + "\n"
-                                        + "country:"    + country + "\n"
-                                        + "knownName:"    + knownName + "\n"
-                                        + "postalCode:"    + postalCode + "\n"
-                                        + "Loc: " + address.getLatitude() + address.getLongitude();
-                          //  tvStates.setText(data);
-
-                            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                            drawCircle(latLng);
-                            mMap.addMarker(new MarkerOptions().position(latLng).title(clocation) .icon(BitmapDescriptorFactory.fromResource(R.drawable.location)));
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.0f));
-
-                            Location gpslocationD;
-                            gpslocation = new Location("");
-                            gpslocation.setLatitude(address.getLatitude());
-                            gpslocation.setLongitude(address.getLongitude());
-
-                            gpslocationD = new Location("");
-
-                            try {
-                                JSONObject jsonObject = new JSONObject(location);
-                                if( jsonObject.getString("result").equals("done")) {
-
-                                    JSONArray jsonArray = jsonObject.getJSONArray("data");
-                                    int counter = 0;
-                                    Double maxTemp = 0.0, minTemp = 100000.0;
-
-
-                                    String cData = "";
-                                    int iUsers = 0;
-                                    cUserTemp = "";
-                                    iNotSafe    = 0;
-                                    for(int x = 0; x < jsonArray.length() ; x++) {
-
-
-                                        addressList = geocoder.getFromLocation(jsonArray.getJSONObject(x).getDouble("lat"),
-                                                jsonArray.getJSONObject(x).getDouble("lon"),1);
-
-                                        gpslocationD.setLatitude(jsonArray.getJSONObject(x).getDouble("lat"));
-                                        gpslocationD.setLongitude(jsonArray.getJSONObject(x).getDouble("lon"));
-                                        Float distance = gpslocationD.distanceTo(gpslocation);
-
-
-                                        if(distance <= 200){
-
-                                            dSum += jsonArray.getJSONObject(x).getDouble("mtemp");
-
-                                            if(jsonArray.getJSONObject(x).getDouble("mtemp")>= 27.8)
-                                                iNotSafe++;
-
-                                            if(jsonArray.getJSONObject(x).getDouble("mtemp")  < minTemp){
-                                                minTemp =  jsonArray.getJSONObject(x).getDouble("mtemp") ;
-
-                                            }
-
-                                            if(jsonArray.getJSONObject(x).getDouble("mtemp") > maxTemp){
-                                                maxTemp = jsonArray.getJSONObject(x).getDouble("mtemp") ;
-                                            }
-
-                                            iUsers++;
-                                            cUserTemp = cUserTemp
-                                                      + iUsers
-                                                      +  "          "
-                                                      +  jsonArray.getJSONObject(x).getDouble("mtemp") + "\n"
-                                                      ;
-
-                                            cUsers += jsonArray.getJSONObject(x).getDouble("id") + ",";
-                                            cData = cData + jsonArray.getJSONObject(x).getDouble("lat") + ":"+
-                                                    jsonArray.getJSONObject(x).getDouble("lon")  + "\n" ;
-                                            counter++;
-
-                                        }
-                                            //address.getAddressLine(0);
-                                    }
-
-                                    String status = "Safe";
-                                    if(maxTemp >= 37.8)
-                                        status = "Not Safe";
-
-                                    if(minTemp > 1000.0)
-                                        minTemp = 0.0;
-                                    
-                                    cData   ="Status                    :" + status + "\n"
-                                            + "People                   :" + counter + "\n"
-                                            + "Average                 :" + (dSum/counter) + "°C\n"
-                                            + "Temp > 37.8°C     :" + iNotSafe + "\n"
-                                            + "Minimum Temp   :" + minTemp + "°C\n"
-                                            + "Maximum Temp  :" + maxTemp + "°C\n";
-
-                                    tvStates.setText(cData);
-                                }else {
-                                }
-                            } catch (JSONException | IOException e) { e.printStackTrace(); }
-
-                        }else print("Can't find " + location);
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                            sendAndRequestResponse(ACTION_TRACK + ID + "&did=" + driverID);
+                        handler.postDelayed(this,15000);
                     }
-
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
+                },1);
             }
         });
 
+        JSONArray jjsonArray = null;
+        try {
+            jjsonArray = new JSONArray(data);
+            JSONObject jjsonObject = new JSONObject(jjsonArray.getJSONObject(0).toString());
+
+            ID = jjsonObject.getString("ID");
+            t.start();
+            ;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+       // t.start();
 
     }
 
-    private void drawCircle(LatLng point){
 
-        // Instantiating CircleOptions to draw a circle around the marker
-        CircleOptions circleOptions = new CircleOptions();
-
-        // Specifying the center of the circle
-        circleOptions.center(point);
-
-        // Radius of the circle
-        circleOptions.radius(300);
-
-        // Border color of the circle
-        circleOptions.strokeColor(Color.BLACK);
-
-        // Fill color of the circle
-        circleOptions.fillColor(0x30ff0000);
-
-        // Border width of the circle
-        circleOptions.strokeWidth(2);
-
-        // Adding the circle to the GoogleMap
-        mMap.addCircle(circleOptions);
-
-    }
     private void print(String response) {
         Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
+        Log.i("infor:" , response);
     }
 
+    private  String getUrl(LatLng origin, LatLng destine){
+
+        String str_origin = "origin=" + origin.latitude + ","+ origin.longitude;
+        String str_dest   = "destination=" + destine.latitude + ","+ destine.longitude;
+        String mode       = "mode=driving";
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        String url = "https://maps.googleapis.com/maps/api/directions/json?" + parameters + "&key=AIzaSyAHtgurSlANT1iA1H5o3L_-XWlf_BVB438" ;
+
+                return url;
+
+    }
 
     private void sendAndRequestResponse(String url) {
 
         //RequestQueue initialized
         mRequestQueue = Volley.newRequestQueue(this);
         url = host + url;
+
         //String Request initialized
         mStringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -266,8 +161,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(response != null ) {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
+
                         if( jsonObject.getString("result").equals("done")) {
-                            cUsers = jsonObject.getString("data");
+                            if(jsonObject.getString("datatype").equals("track")) {
+
+                                mMap.clear();
+                                JSONArray jsonArray = jsonObject.getJSONArray("data");
+                                Double driverLat = Double.parseDouble(jsonArray.getJSONObject(0).getString("Latitude"));
+                                Double driverLon = Double.parseDouble(jsonArray.getJSONObject(0).getString("Longitude"));
+
+                                Double patientLat = Double.parseDouble(jsonArray.getJSONObject(0).getString("lat"));
+                                Double patientLon = Double.parseDouble(jsonArray.getJSONObject(0).getString("lon"));
+
+                                createMarker(driverLat,driverLon,"Driver","", R.drawable.ambulance);
+                                createMarker(patientLat,patientLon,"Me","", R.drawable.patient);
+
+                                directionUrl = getUrl(new LatLng(patientLat,patientLon),
+                                                    new LatLng(driverLat,driverLon));
+
+                                FetchMyData process = new FetchMyData();
+                                process.execute();
+
+
+                            }
                         }
 
                     } catch (JSONException e) {
@@ -289,57 +205,109 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mRequestQueue.add(mStringRequest);
     }
 
+ private void  drawpath(){
 
+        if(isMapReady){
+            try {
+
+route = route.replace("null" , "");
+
+
+                if(polyline != null)
+                    polyline.remove();
+                JSONObject jsonObject1 = new JSONObject(route);
+                // polyline.remove();
+                PolylineOptions polylineOptions = new PolylineOptions();
+                JSONArray arr = null;
+                JSONObject distance = null;
+                JSONObject duration = null;
+
+                arr = jsonObject1.getJSONArray("routes");
+
+
+                arr = arr.getJSONObject(0).getJSONArray("legs");
+                distance = arr.getJSONObject(0).getJSONObject("distance");
+                duration = arr.getJSONObject(0).getJSONObject("duration");
+                arr = arr.getJSONObject(0).getJSONArray("steps");
+
+                tvStates.setText("Distance:" + distance.getString("text") +
+                                "\n" +
+                                "Duration:" + duration.getString("text")
+                                 );
+
+                for (int i = 0; i < arr.length(); i++)
+                {
+                    polylineOptions.color(Color.RED);
+                    polylineOptions.width(12);
+
+                    JSONObject poly = arr.getJSONObject(i).getJSONObject("polyline");
+                    String st_polyline = poly.getString("points");
+
+                    List<LatLng> list = decodePoly(st_polyline);
+                    for(int x = 0; x< list.size() ; x++) {
+                        polylineOptions.add(list.get(x));
+
+                    }
+                    polylineOptions.geodesic(true);
+                }
+
+                polyline=mMap.addPolyline(polylineOptions);
+                // polyline.remove();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+ }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        SharedPreferences prefs = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE);
-        //host = prefs.getString("host", "http://192.168.0.116/thermo/");
-        String log = prefs.getString("lon", "0");//"No name defined" is the default value.
-        String lat = prefs.getString("lat", "0"); //0 is the default value.
-        location = prefs.getString("location", "{}");
-
-        createMarker(Double.parseDouble(lat), Double.parseDouble(log),"Me","", R.drawable.thermometer);
-
-        try {
-            JSONObject jsonObject = new JSONObject(location);
-            if( jsonObject.getString("result").equals("done")) {
-
-                JSONArray jsonArray = jsonObject.getJSONArray("data");
-
-                for(int x = 0; x < jsonArray.length() ; x++) {
-
-                    List<Address> addressList = null;
-                    Geocoder geocoder = new Geocoder(MapsActivity.this );
-                    addressList = geocoder.getFromLocation(jsonArray.getJSONObject(x).getDouble("lat"),
-                            jsonArray.getJSONObject(x).getDouble("lon"),1);
-
-                    Address address = addressList.get(0);
-                    String addresse = address.getAddressLine(0);
-
-                    createMarker(jsonArray.getJSONObject(x).getDouble("lat"),
-                                 jsonArray.getJSONObject(x).getDouble("lon"),
-                                 jsonArray.getJSONObject(x).getDouble("mtemp") + "°C"
-                                 ,
-                         "",
-                                 R.drawable.virus);
-                }
-
-            }else {
-
-            }
 
 
-        } catch (JSONException | IOException e) { e.printStackTrace(); }
+       isMapReady = true;
 
 
     }
 
+    private List<LatLng> decodePoly(String encoded) {
+
+        List<LatLng> poly = new ArrayList<>();
+        int index = 0, len = encoded.length();
+        int lat = 0, lng = 0;
+
+        while (index < len) {
+            int b, shift = 0, result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+
+            LatLng p = new LatLng((((double) lat / 1E5)),
+                    (((double) lng / 1E5)));
+            poly.add(p);
+        }
+
+        return poly;
+    }
     protected Marker createMarker(double latitude, double longitude, String title, String snippet, int iconResID) {
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10.0f));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 13.0f));
         return mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
                 .anchor(0.5f, 0.5f)
@@ -348,4 +316,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .icon(BitmapDescriptorFactory.fromResource(iconResID))
         );
     }
+
+
+    public class FetchMyData extends AsyncTask<Void,Void,Void> {
+        String result;
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                URL url = new URL(directionUrl);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String line = "";
+                while (line != null) {
+                    line = bufferedReader.readLine();
+                    result = result + line;
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            route = result;
+            drawpath();
+        }
+    }
+
+
 }

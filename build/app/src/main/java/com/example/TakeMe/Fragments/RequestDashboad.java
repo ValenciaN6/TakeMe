@@ -3,6 +3,7 @@ package com.example.TakeMe.Fragments;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
@@ -72,6 +73,7 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
     private String mParam1;
     private String mParam2;
     private String[] itemsID;
+    private SharedPreferences preferences;
 
     public RequestDashboad() {
         // Required empty public constructor
@@ -79,11 +81,10 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
 
     public void setmapData(String dt){
         mMap.clear();
-        //print(data);
+
         try {
             JSONArray jjsonArray = new JSONArray(data);
             JSONObject jjsonObject = new JSONObject(jjsonArray.getJSONObject(0).toString());
-            ;
 
             createMarker(jjsonObject.getDouble("Latitude"), jjsonObject.getDouble("Longitude"),"Me","", R.drawable.accident);
 
@@ -93,10 +94,8 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
             gpslocationD.setLatitude(jjsonObject.getDouble("Latitude"));
             gpslocationD.setLongitude(jjsonObject.getDouble("Longitude"));
 
-
             drawCircle(latLng);
             if(!dt.equals("")) {
-
 
                 JSONObject jsonObject = new JSONObject(dt);
                 JSONArray jsonArray = jsonObject.getJSONArray("data");
@@ -109,14 +108,14 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
                     Float distance = (( gpslocation.distanceTo(gpslocationD))/1000 )+ 0.5f;
                     String di = String.format("%.2f", distance); // distance.toString().split(".")[0];
 
+                    if(distance <= 10)
                     createMarker(jsonArray.getJSONObject(x).getDouble("Latitude"),
-                            jsonArray.getJSONObject(x).getDouble("Longitude"),
-                            jsonArray.getJSONObject(x).getString("NumberPlate") + " : "
+                                jsonArray.getJSONObject(x).getDouble("Longitude"),
+                               jsonArray.getJSONObject(x).getString("NumberPlate") + " : "
                                     + jsonArray.getJSONObject(x).getString("Description")
-                            + ": " + di +"km"
-                            ,
-                            "",
-                            R.drawable.ambulance);
+                                    + ": " + di +"km",
+                               "",
+                                R.drawable.ambulance);
                 }
             }
 
@@ -155,11 +154,18 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment)this.getChildFragmentManager()
                .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        items = new CharSequence[1];
+        itemsID = new String[1];
+
+        items[0] = "For myself" ;
+
+       // Intent intent = new Intent(getContext() , MapsActivity.class);
+      //  startActivity(intent);
 
 
-        SharedPreferences preferences = this.getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        preferences = this.getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         btnRequest = (FloatingActionButton)view.findViewById(R.id.btnRequest);
-        data = preferences.getString("data", "{}");//"No name defined" is the default value.
+        data = preferences.getString("data", "{}");
         host = preferences.getString("host", "http://192.168.1.33/takeme/");
 
 
@@ -168,8 +174,10 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
             jjsonArray = new JSONArray(data);
             JSONObject jjsonObject = new JSONObject(jjsonArray.getJSONObject(0).toString());
 
+
             ID = jjsonObject.getString("ID");
             ;
+            itemsID[0]  = ID;
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -180,16 +188,14 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
             @Override
             public boolean onLongClick(View v) {
 
-
-                // = {"Red", "Green", "Blue"};
-
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
                 dialogBuilder.setTitle("Who do you want to request for?");
                 dialogBuilder.setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do anything you want here
                         print("Requesting and ambulance for " + items[which]);
-                        sendAndRequestResponse(ACTION_REQUEST + "fm=" + itemsID[which] + "&to=" + ID + "&tp=request");
+                        sendAndRequestResponse(ACTION_REQUEST + "fm=" + itemsID[which] + "&to=" + ID + "&tp=Ambulance request");
+
                     }
                 });
 
@@ -205,10 +211,10 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
             public void onClick(View v) {
               count++;
 
-              if(count >= 5)
+              if(count >= 2)
               {
                   print("Requesting an ambulance...."); //fm=6&to=6&tp=request
-                  sendAndRequestResponse(ACTION_REQUEST + "fm=" + ID + "&to=" + ID + "&tp=request");
+                  sendAndRequestResponse(ACTION_REQUEST + "fm=" + ID + "&to=" + ID + "&tp=Ambulance request");
                   count = 0;
               }
             }
@@ -221,9 +227,12 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(getContext() != null)
+                        if(getContext() != null){
 
-                        sendAndRequestResponse(ACTION_GET_AMBULANCE);
+                            data = preferences.getString("data", "{}");
+
+                        sendAndRequestResponse(ACTION_GET_AMBULANCE);}
+
                         handler.postDelayed(this,10000);
                     }
                 },1);
@@ -231,16 +240,12 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
         });
         t.start();
 
-        //
-
         sendAndRequestResponse(ACTION_GETFRIENDS + ID );
         return view;
     }
 
 
-
     protected Marker createMarker(double latitude, double longitude, String title, String snippet, int iconResID) {
-
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10.0f));
         return mMap.addMarker(new MarkerOptions()
@@ -250,6 +255,7 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
                 .snippet(snippet)
                 .icon(BitmapDescriptorFactory.fromResource(iconResID))
         );
+
     }
 
     private void sendAndRequestResponse(String url) {
@@ -275,32 +281,29 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
                             if(jsonObject.getString("datatype").equals("ambulance")) { //
                                setmapData(response);
 
-                            }else if(jsonObject.getString("datatype").equals("friend")){
+                            }else
+                                if(jsonObject.getString("datatype").equals("friend")){
 
-                                items = new CharSequence[jsonObject.getJSONArray("data").length()];
-                                itemsID = new String[jsonObject.getJSONArray("data").length()];
+                                items = new CharSequence[jsonObject.getJSONArray("data").length()+1];
+                                itemsID = new String[jsonObject.getJSONArray("data").length()+1];
 
+                                items[0] = "For myself" ;
+                                itemsID[0]  = ID;
 
                                 for(int x = 0 ; x < jsonObject.getJSONArray("data").length() ; x++){
-                                    items[x] = jsonObject.getJSONArray("data").getJSONObject(x).getString("Email");
-                                    itemsID[x]  = jsonObject.getJSONArray("data").getJSONObject(x).getString("ID");
+
+                                    if(jsonObject.getJSONArray("data").getJSONObject(x).getString("Name") != null) {
+
+                                        items[x +1] = jsonObject.getJSONArray("data").getJSONObject(x).getString("Name");
+                                        itemsID[x + 1] = jsonObject.getJSONArray("data").getJSONObject(x).getString("patientID");
+
+                                    }
                                 }
-
-
-                              //  print(jsonObject.getJSONArray("data").getJSONObject(0).toString());
-
-                               /* SharedPreferences.Editor editor = getActivity().getSharedPreferences(MyPREFERENCES, MODE_PRIVATE).edit();
-                                editor.putString("location", response);
-                                editor.apply();
-
-                                Intent intent = new Intent( getContext(), MapsActivity.class );
-                                startActivity(intent);*/
-
-
 
                             }
 
                         }else {
+                            if(!jsonObject.getString("error").equals("-1"))
                             print(jsonObject.getString("error"));
                         }
                     } catch (JSONException e) { e.printStackTrace(); }
