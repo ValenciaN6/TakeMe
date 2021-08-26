@@ -59,7 +59,7 @@ public class DriverDashboad extends Fragment implements OnMapReadyCallback , Goo
 
     private Handler handler = new Handler();
     private String ACTION_GET_AMBULANCE = "getRequest.php?id=";
-    private String ACTION_GETFRIENDS = "getfriend.php?id=";
+    private String ACTION_GETFRIENDS = "getFriend.php?id=";
     private String ACTION_ACCEPT_REQUEST = "acceptDriverRequest.php?tID=";
     private String ACTION_REQUEST = "request.php?";
     private RequestQueue mRequestQueue;

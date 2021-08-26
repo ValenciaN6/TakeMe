@@ -45,7 +45,7 @@ public class Register extends AppCompatActivity {
     private  EditText edtEmail,edtName,edtSurname,  edtPass,edtPhone,edtPassc,edtNextName,edtNextCell;
     private String username = "",surname = "", email = "", pass = "", phone = "" , longitude="0" , latitude = "0.0", passc, host , nextCell,nextName;
 
-    private String MyPREFERENCES = "32145788" ,ACTIOB_ADDUSER = "adduser.php?";
+    private String MyPREFERENCES = "32145788" ,ACTIOB_ADDUSER = "addUser.php?";
     private EditText edtDescription;
     private EditText edtCarNum;
     private String plate , carDesci;

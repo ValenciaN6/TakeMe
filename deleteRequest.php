@@ -1,9 +1,9 @@
 
 <?php
-include('../baseservice/json.php');
+include('baseservice/json.php');
 use \Simple\json;
 
-include('../baseservice/baseservice.php');	
+include('baseservice/baseservice.php');	
 include("connecter.php");
 
 //`ID`, `Email`, `Name`, `Surname`, `PhoneNumber`, `UserType`, `Latitude`, `Longitude`, `Password`

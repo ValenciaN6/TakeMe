@@ -58,8 +58,8 @@ public class NotificationService extends Service{
     private String id;
     private String host;
     private String MyPREFERENCES                 = "32145788" ;
-    private String ACTION_GETLOCATION            = "getlocation.php?id=";
-    private String ACTION_UPDATE_LOCATION        = "updatelocation.php?id=";
+    private String ACTION_GETLOCATION            = "getLocation.php?id=";
+    private String ACTION_UPDATE_LOCATION        = "updateLocation.php?id=";
     private String ID_SPECIAL_OFFER_NOTIFICATION = "1236";
 
     private Location currentLooation;

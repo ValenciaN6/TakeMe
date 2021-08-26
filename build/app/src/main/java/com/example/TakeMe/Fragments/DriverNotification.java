@@ -68,7 +68,7 @@ public class DriverNotification extends Fragment {
     private String ACTION_NOTIFICATION = "getNotificationD.php?id=";
     private String ACTION_DELETE_NOTIFICATION = "deleteRequest.php?id=";
     private String ACTION_UPDATE_REQUEST = "acceptDriverRequest.php?tID=";
-    private String ACTION_COMPLETE_REQUEST = "completerequest.php?id=";
+    private String ACTION_COMPLETE_REQUEST = "completeRequest.php?id=";
     private StringRequest mStringRequest;
     private String data ="{}";
     private String host ;
@@ -123,7 +123,7 @@ public class DriverNotification extends Fragment {
 
         SharedPreferences preferences = this.getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         data = preferences.getString("data", "{}");//"No name defined" is the default value.
-        host = preferences.getString("host", "http://192.168.1.33/takeme/");
+        host = preferences.getString("host", "");
 
        // sendSMSMessage("0670026063" , "sms");
 

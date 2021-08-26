@@ -55,7 +55,7 @@ public class RequestSettings extends Fragment implements SearchView.OnQueryTextL
     private String ACTION_FRIEND = "getFriend.php?id=";
     private String ACTION_DELETE_FRIEND = "deleteFriend.php?id=";
     private String ACTION_FRIEND_REQUEST = "friendRequest.php?fm=";  //
-    private String ACTION_ALL_USERS      = "getallusers.php?id=";
+    private String ACTION_ALL_USERS      = "getAllUsers.php?id=";
     private StringRequest mStringRequest;
     private String data ="{}";
     private String host ;

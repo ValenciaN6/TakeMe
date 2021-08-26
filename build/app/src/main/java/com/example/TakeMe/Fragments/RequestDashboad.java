@@ -55,8 +55,8 @@ public class RequestDashboad extends Fragment implements OnMapReadyCallback {
     private CharSequence[] items;
 
     private Handler handler = new Handler();
-    private String ACTION_GET_AMBULANCE = "getambulance.php";
-    private String ACTION_GETFRIENDS = "getfriend.php?id=";
+    private String ACTION_GET_AMBULANCE = "getAmbulance.php";
+    private String ACTION_GETFRIENDS = "getFriend.php?id=";
     private String ACTION_REQUEST = "request.php?";
     private RequestQueue mRequestQueue;
     private StringRequest mStringRequest;

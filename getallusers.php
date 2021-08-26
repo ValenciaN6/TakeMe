@@ -5,20 +5,18 @@ use \Simple\json;
 include('baseservice/baseservice.php');	
 include("connecter.php");
 
-function getfriend($id ){
+function getallusers($id ){
 	
 	
 	
      $link = @Conection(new json());
-     $sql  = "SELECT `patient`.`Name`, `patient`.`Surname`, `patient`.`Email` ,`patient`.`ID` as 'patientID', `friend`.`ID` FROM `friend` , `patient` WHERE (`friend`.`IDA` = '$id' OR `friend`.`IDB` = '$id') AND ( IF( `friend`.`IDA` = '$id' , `patient`.`ID` = `friend`.`IDB` , `patient`.`ID` = `friend`.`IDA` )) and `friend`.`Status` = '2'";
+     $sql  = "SELECT `patient`.`Name`, `patient`.`Surname`, `patient`.`Email` ,`patient`.`ID` FROM `patient` WHERE `patient`.`ID` != '$id'";
 
      $dt =  @getElements($sql,new json());
-	 $dt->error = "-1";
 //SELECT `patient`.`Name`, `patient`.`Surname`, `patient`.`Email` , `friend`.`ID` FROM `friend` , `patient` WHERE (`friend`.`IDA` = '$id' OR `friend`.`IDB` = '$id') AND ( IF( `friend`.`IDA` = '$id' , `patient`.`ID` = `friend`.`IDB` , `patient`.`ID` = `friend`.`IDA` )) and `friend`.`Status` = '2'
-	$dt->datatype = "friend";
-	
+	$dt->datatype = "allusers";
    return $dt;
 }
 
-getfriend($_GET['id'])->send();
+getallusers($_GET['id'])->send();
 ?>

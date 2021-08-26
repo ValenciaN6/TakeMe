@@ -19,7 +19,7 @@
         android:layout_height="62dp"
         android:background="#48161617"
         android:fontFamily="sans-serif-black"
-        android:text="Ambulance Response Application"
+        android:text="Ambulance Response"
         android:textAlignment="center"
         android:paddingTop="15dp"
         android:textAllCaps="true"

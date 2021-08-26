@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     private String MyPREFERENCES = "32145788";
     private String type = "patient";
     private RequestQueue mRequestQueue;
-    private String host = "http://10.0.0.103/takeme/";
+    private String host = "http://khananiconsulting.co.za/takeme/";
     private StringRequest mStringRequest;
     private String ACTION_LOGIN = "login.php?";
 
@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE).edit();
         editor.putString ("host", host );
         editor.commit();
-        
+
         loading.setVisibility(View.GONE);
 
         signIn.setOnClickListener(new View.OnClickListener() {

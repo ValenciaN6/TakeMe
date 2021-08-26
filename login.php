@@ -1,13 +1,16 @@
 <?php
-include('../baseservice/json.php');
+include('baseservice/json.php');
 use \Simple\json;
 
-include('../baseservice/baseservice.php');	
+include('baseservice/baseservice.php');	
 include("connecter.php");
 
 function login($Email ,$pass){
 	
      $link = @Conection(new json());
+	 
+	    $sql = "INSERT INTO `driver` (`ID`, `Email`, `Name`, `Surname`, `PhoneNumber`, `UserType`, `Latitude`, `Longitude`, `Password`) VALUES (-1, '-1', '', '', '', '0', '-1', '-1', '')";
+   $result = mysqli_query($link , $sql ); 
 	 
      $sql  = "SELECT * FROM `patient` WHERE `Email` = '$Email' and `Password` = '$pass'";
  
@@ -34,7 +37,6 @@ function login($Email ,$pass){
 		 $dt->datatype = "login";
 		
 	 }
-	
    return $dt;
 }
 

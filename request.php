@@ -1,9 +1,9 @@
 
 <?php
-include('../baseservice/json.php');
+include('baseservice/json.php');
 use \Simple\json;
 
-include('../baseservice/baseservice.php');	
+include('baseservice/baseservice.php');	
 include("connecter.php");
 
 
@@ -18,7 +18,7 @@ function request($from,$to,$type){
  
    
       $link = @Conection(new json());
-	  $sql = "SELECT * FROM `notification` WHERE `Type` = '$type' AND `FromID` = '$from' AND `Status` = 'waiting'";
+	  $sql = "SELECT * FROM `notification` WHERE `Type` = '$type' AND `FromID` = '$from' and `ToID` = '-1' AND `Status` <= '4'";
 	  
 	  $dt =  @getElements($sql,new json()); 
 	  if($dt->result == "done"){
@@ -26,7 +26,7 @@ function request($from,$to,$type){
 	  }
 	  else{
   
-		$sql = "INSERT INTO `notification` (`ID`, `Type`, `FromID`, `ToID`, `Status`, `Message`, `Date`) VALUES (NULL, '$type', '$from', '-1', 'Waiting', '$to', CURRENT_TIMESTAMP);";
+		$sql = "INSERT INTO `notification` (`ID`, `Type`, `FromID`, `ToID`, `Status`, `Message`, `Date`) VALUES (NULL, '$type', '$from', '-1', '0', '$to', CURRENT_TIMESTAMP);";
 
 		$result = mysqli_query($link , $sql );  
 		if($result){

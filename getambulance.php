@@ -1,8 +1,8 @@
 <?php
-include('../baseservice/json.php');
+include('baseservice/json.php');
 use \Simple\json;
 
-include('../baseservice/baseservice.php');	
+include('baseservice/baseservice.php');	
 include("connecter.php");
 
 function getambulance( ){
@@ -10,7 +10,7 @@ function getambulance( ){
 	
 	
      $link = @Conection(new json());
-     $sql  = "SELECT `driver`.`Name` , `driver`.`Latitude` , `driver`.`Longitude` , `ambulance`.`NumberPlate` , `ambulance`.`Description` FROM `driver` , `ambulance` WHERE `driver`.`ID` = `ambulance`.`DriverID`";
+     $sql  = "SELECT `driver`.`Name` , `driver`.`Latitude` , `driver`.`Longitude` , `driver`.`NumberPlate` , `driver`.`Description` FROM `driver` WHERE true";
 
      $dt =  @getElements($sql,new json());
 

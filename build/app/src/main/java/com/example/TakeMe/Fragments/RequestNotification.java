@@ -54,7 +54,7 @@ public class RequestNotification extends Fragment {
     private RequestQueue mRequestQueue;
     private String ACTION_NOTIFICATION = "getNotification.php?id=";
     private String ACTION_DELETE_NOTIFICATION = "deleteRequest.php?id=";
-    private String ACTION_ACCEPT_FRIEND = "acceptfriend.php?id=";
+    private String ACTION_ACCEPT_FRIEND = "acceptFriend.php?id=";
     private StringRequest mStringRequest;
     private String data ="{}";
     private String host ;
@@ -65,7 +65,7 @@ public class RequestNotification extends Fragment {
     private int request = -1;
     private String [] status  = {"Waiting" , "Accepted","Collected" , "Delivered","Completed"};
     private String [] bntstep = {"DELETE"  , "",""    , "" ,"DELETE"};
-    private String [] statusA   = {""       , "TRACK"   ,"TRACK" , "TRACK","TRACK"};
+    private String [] statusA   = {""       , "TRACK"   ,"TRACK" , "",""};
 
     public RequestNotification() {
         // Required empty public constructor
